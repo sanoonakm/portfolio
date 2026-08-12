@@ -892,10 +892,12 @@
   const heroSection = document.querySelector('.hero');
   let mouseX = 0, mouseY = 0;
 
-  function runParallax(){
+ function runParallax(){
     const scrollY = window.scrollY;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
     if(scrollProgress) scrollProgress.style.width = (docHeight > 0 ? (scrollY / docHeight) * 100 : 0) + '%';
+
+    const isMobile = window.innerWidth <= 720;
 
     if(!reduceMotion){
       if(mesh) mesh.style.transform = `translate3d(${mouseX}px, ${mouseY + scrollY * 0.1}px, 0)`;
@@ -904,7 +906,7 @@
         const heroH = heroSection.offsetHeight;
         const p = Math.min(scrollY / heroH, 1);
         heroText.style.transform = `translateY(${scrollY * 0.18}px)`;
-        heroText.style.opacity = String(1 - p * 1.15);
+        heroText.style.opacity = isMobile ? '1' : String(1 - p * 1.15);
       }
 
       if(portraitParallax && heroSection){
@@ -912,7 +914,7 @@
         const p = Math.min(scrollY / heroH, 1);
         const scale = 1 - Math.min(scrollY * 0.00022, 0.1);
         portraitParallax.style.transform = `translateY(${scrollY * 0.28}px) scale(${scale})`;
-        portraitParallax.style.opacity = String(1 - p * 1.15);
+        portraitParallax.style.opacity = isMobile ? '1' : String(1 - p * 1.15);
       }
 
       parallaxEls.forEach(el => {
@@ -924,7 +926,7 @@
     }
 
     requestAnimationFrame(runParallax);
-  }
+}
   requestAnimationFrame(runParallax);
 
   // mobile nav
