@@ -1,781 +1,992 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Sanoona KM — UI/UX Designer & Full Stack Developer</title>
+<meta name="description" content="Sanoona KM — UI/UX Designer and Full Stack Web Developer specializing in responsive websites, merchant dashboards, PHP, JavaScript, Python and Flask.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+      --ease: cubic-bezier(0.16, 0.84, 0.44, 1);
+  --bg:#020203;
+    --bg-2:#07060c;
+    --surface:rgba(255,255,255,0.035);
+    --surface-hi:rgba(255,255,255,0.07);
+    --border:rgba(255,255,255,0.08);
+    --border-hi:rgba(255,255,255,0.16);
+    --text:#f5f4fb;
+    --text-dim:#948fae;
+    --text-dimmer:#5c5775;
+    --accent:#ff0090;
+    --accent-soft:rgba(139,92,246,0.16);
+    --accent-2:#2ee6ca;
+    --accent-2-soft:rgba(46,230,200,0.14);
+    --radius:18px;
+    --maxw:1180px;
+  }
 
-  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Sora',sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--accent); color:#fff;}
 
-  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
+  h1,h2,h3,h4{
+    font-family:'Unbounded',sans-serif;
+    line-height:1.18;
+    letter-spacing:-0.015em;
+    color:var(--text);
+  }
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  img{max-width:100%; display:block;}
 
-  <title>Portfolio | Sanoona KM</title>
+  .mono{
+    font-family:'JetBrains Mono',monospace;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    font-size:0.72rem;
+    font-weight:600;
+  }
 
-  <meta property="og:title" content="Portfolio | Sanoona KM" />
+  .wrap{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:0 32px;
+  }
 
-  <meta property="og:locale" content="en_US" />
+  /* ---------- ambient background ---------- */
+  .mesh{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .mesh::before, .mesh::after{
+    content:'';
+    position:absolute;
+    width:60vmax;
+    height:60vmax;
+    border-radius:50%;
+    filter:blur(130px);
+    opacity:0.22;
+  }
+  .mesh::before{
+    background:var(--accent);
+    top:-22%;
+    left:-18%;
+    animation:drift1 26s ease-in-out infinite alternate;
+  }
+  .mesh::after{
+    background:var(--accent-2);
+    bottom:-28%;
+    right:-18%;
+    opacity:0.14;
+    animation:drift2 30s ease-in-out infinite alternate;
+  }
+  @keyframes drift1{
+    0%{transform:translate(0,0) scale(1);}
+    100%{transform:translate(6vw,8vh) scale(1.15);}
+  }
+  @keyframes drift2{
+    0%{transform:translate(0,0) scale(1);}
+    100%{transform:translate(-5vw,-6vh) scale(1.1);}
+  }
+  .grain{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    opacity:0.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
 
-  <link rel="canonical" href="//" />
+  section, header, footer{ position:relative; z-index:2; }
 
-  <meta property="og:url" content="//" />
+  /* ---------- glass utility ---------- */
+  .glass{
+    background:var(--surface);
+    border:1px solid var(--border);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-radius:var(--radius);
+  }
 
-  <meta name="description"
-content="Sanoona KM - UI/UX Designer and Full Stack Web Developer specializing in responsive websites, web applications, PHP, JavaScript, Python, Flask, and modern frontend development." />
+  /* ---------- nav ---------- */
+  .scroll-progress{
+    position:fixed;
+    top:0; left:0;
+    height:2px;
+    width:0%;
+    background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    z-index:200;
+    transition:width .1s linear;
+  }
 
-  <link rel="icon" type="image/png" href="assets/img/sanu.png" />
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    padding:18px 0;
+  }
+  .navbar{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:12px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .logo{
+    font-family:'Unbounded',sans-serif;
+    font-weight:700;
+    font-size:1.15rem;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .logo span{color:var(--accent);}
+  .nav-links{
+    display:flex;
+    gap:34px;
+    align-items:center;
+  }
+  .nav-links a{
+       font-size: 0.92rem;
+    color: #ffffff;
+    transition: color .25s var(--ease);
+    position: relative;
+  }
+  .nav-links a:hover{color:var(--text);}
+  .nav-links a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:-6px;
+    width:0; height:1px;
+    background:var(--accent-2);
+    transition:width .3s var(--ease);
+  }
+  .nav-links a:hover::after{width:100%;}
+  .nav-cta{
+    padding:10px 20px;
+    border-radius:100px;
+    background:var(--accent);
+    color:#fff;
+    font-size:0.88rem;
+    font-weight:600;
+    transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+    box-shadow:0 0 0 rgba(124,92,252,0);
+  }
+  .nav-cta:hover{transform:translateY(-2px); box-shadow:0 10px 26px rgba(124,92,252,0.35);}
+  .burger{display:none; flex-direction:column; gap:5px; cursor:pointer; z-index:200;}
+  .burger span{width:24px; height:2px; background:var(--text); transition:.3s var(--ease);}
 
-  <meta name="theme-color" content="#5540af" />
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding:140px 0 80px;
+  }
+  .hero .wrap{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:60px;
+    align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:var(--accent-2);
+    margin-bottom:22px;
+  }
+  .eyebrow .dot{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--accent-2);
+    box-shadow:0 0 0 4px var(--accent-2-soft);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;}
+    50%{opacity:0.4;}
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 5.6vw, 4.3rem);
+    font-weight:600;
+    line-height:1.08;
+    margin-bottom:18px;
+  }
+  .hero h1 .grad{
+    background:linear-gradient(100deg, var(--accent), var(--accent-2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .hero .role{
+    font-family:'JetBrains Mono',monospace;
+    font-size:1.02rem;
+    color:var(--text-dim);
+    margin-bottom:26px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .hero .role .bar{ width:28px; height:1px; background:var(--accent-2); display:inline-block; }
+  .hero p.lead{
+    color:var(--text-dim);
+    font-size:1.08rem;
+    max-width:480px;
+    margin-bottom:34px;
+  }
+  .hero-cta{
+    display:flex;
+    gap:16px;
+    align-items:center;
+    margin-bottom:44px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    padding:14px 26px;
+    border-radius:100px;
+    font-weight:600;
+    font-size:0.94rem;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+  }
+  .btn-primary{
+    background:var(--accent);
+    color:#fff;
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 12px 30px rgba(124,92,252,0.4);}
+  .btn-ghost{
+    border:1px solid var(--border-hi);
+    color:var(--text);
+  }
+  .btn-ghost:hover{background:var(--surface-hi); transform:translateY(-2px);}
 
-  <meta property="og:site_name" content="Portfolio | Sanoona KM" />
+  .social-row{
+    display:flex;
+    gap:14px;
+  }
+  .social-row a{
+    width:42px; height:42px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--border);
+    border-radius:12px;
+    color:var(--text-dim);
+    transition:.25s var(--ease);
+  }
+  .social-row a:hover{
+    color:var(--text);
+    border-color:var(--accent);
+    background:var(--accent-soft);
+    transform:translateY(-3px);
+  }
+  .social-row svg{width:18px; height:18px;}
 
-  <meta property="og:image" content="assets/img/social.jpg" />
+  /* hero portrait — signature element */
+  .panel-wrap{ position:relative; display:flex; justify-content:center; }
+  .portrait-glow{
+    position:absolute;
+    inset:-8% -4%;
+    background:radial-gradient(closest-side, var(--accent-soft), transparent 70%);
+    filter:blur(10px);
+    z-index:0;
+    animation:glowpulse 5s ease-in-out infinite;
+  }
+  @keyframes glowpulse{
+    0%,100%{opacity:0.7; transform:scale(1);}
+    50%{opacity:1; transform:scale(1.04);}
+  }
+  .portrait-frame{
+    position:relative;
+    z-index:1;
+    width:min(100%, 400px);
+    aspect-ratio:3/4;
+    border-radius:28px;
+    overflow:hidden;
+    /* border:1px solid var(--border-hi); */
+    /* box-shadow:0 40px 90px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(255,255,255,0.04); */
+    animation:floaty 7s ease-in-out infinite;
+  }
+  @keyframes floaty{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-14px);}
+  }
+  .portrait-frame img{
+    width:100%; height:100%; object-fit:contain;
+    filter:saturate(1.02);
+  }
+  .portrait-frame::after{
+    content:'';
+    position:absolute; inset:0;
+    background:linear-gradient(200deg, transparent 55%, rgba(2,2,3,0.75) 100%);
+  }
+  .portrait-tag{
+    position:absolute;
+    left:22px; right:22px; bottom:20px;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .portrait-tag .who{ }
+  .portrait-tag .who .nm{ font-family:'Unbounded',sans-serif; font-weight:700; font-size:1.05rem; color:#fff; }
+  .portrait-tag .who .rl{ font-size:0.78rem; color:rgba(255,255,255,0.75); margin-top:2px; }
+  .portrait-tag .status{
+    display:flex; align-items:center; gap:6px;
+    padding:7px 12px;
+    border-radius:100px;
+    background:rgba(2,2,3,0.55);
+    border:1px solid rgba(255,255,255,0.15);
+    backdrop-filter:blur(6px);
+    font-size:0.72rem;
+    color:var(--accent-2);
+  }
+  .portrait-tag .status .dot{
+    width:6px; height:6px; border-radius:50%; background:var(--accent-2);
+    box-shadow:0 0 0 3px var(--accent-2-soft);
+    animation:pulse 2s infinite;
+  }
 
-  <meta name="twitter:card" content="summary_large_image" />
+  .badge-row{
+    position:relative; z-index:2;
+    display:flex; flex-wrap:wrap; gap:10px;
+    max-width:400px;
+    margin:22px auto 0;
+    justify-content:center;
+  }
+.badge {
+    width: 50px;
+    height: 50px;
+    padding: 2px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    /* background: rgba(255, 255, 255, 0.92); */
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bob 4s ease-in-out infinite;
+    transition: transform .3s var(--ease), border-color .3s var(--ease);
+}
+  .badge img{ width:100%; height:100%; object-fit:contain; }
+  .badge.dark{ background:rgba(10,10,14,0.92); border-color:var(--border-hi); }
+  .badge:hover{ transform:translateY(-4px); border-color:var(--accent-2); }
+  .badge:nth-child(2n){ animation-delay:.6s; }
+  .badge:nth-child(3n){ animation-delay:1.2s; }
+  @keyframes bob{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-5px);}
+  }
 
-  <meta name="twitter:site" content="@tailwindmade" />
+  /* ---------- section shell ---------- */
+  section{ padding:120px 0; }
+  .section-head{ margin-bottom:56px; max-width:640px; }
+  .section-head .mono{ color:var(--accent-2); display:block; margin-bottom:14px; }
+  .section-head h2{ font-size:clamp(1.8rem, 3.4vw, 2.5rem); margin-bottom:14px; }
+  .section-head p{ color:var(--text-dim); font-size:1.02rem; }
 
-  <link crossorigin="crossorigin" href="https://fonts.gstatic.com" rel="preconnect" />
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .8s var(--ease), transform .8s var(--ease);
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
 
-  <link as="style"
-    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Raleway:wght@400;500;600;700&display=swap"
-    rel="preload" />
+  /* ---------- about ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:70px;
+    align-items:start;
+  }
+  .about-grid h3{ font-size:1.3rem; margin-bottom:16px; }
+  .about-grid p{ color:var(--text-dim); margin-bottom:16px; }
+  .skill{ margin-bottom:20px; }
+  .skill-top{
+    display:flex; justify-content:space-between;
+    font-size:0.88rem; margin-bottom:8px;
+  }
+  .skill-top span:last-child{ color:var(--text-dimmer); font-family:'JetBrains Mono',monospace; }
+  .skill-track{
+    height:6px; border-radius:100px;
+    background:rgba(255,255,255,0.06);
+    overflow:hidden;
+  }
+  .skill-fill{
+    height:100%; border-radius:100px;
+    background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    width:0%;
+    transition:width 1.4s var(--ease);
+  }
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Raleway:wght@400;500;600;700&display=swap"
-    rel="stylesheet" />
+  /* ---------- services ---------- */
+  .grid-3{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:22px;
+  }
+  .card{
+    padding:30px 26px;
+    transition:transform .35s var(--ease), border-color .35s var(--ease), background .35s var(--ease);
+  }
+  .card:hover{
+    transform:translateY(-6px);
+    border-color:var(--border-hi);
+    background:var(--surface-hi);
+  }
+  .card .icon{
+    width:44px; height:44px;
+    border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--accent-soft);
+    color:var(--accent);
+    margin-bottom:20px;
+  }
+  .card .icon svg{width:22px; height:22px;}
+  .card h4{ font-size:1.08rem; margin-bottom:10px; }
+  .card p{ color:var(--text-dim); font-size:0.92rem; }
 
-  <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+  /* ---------- portfolio ---------- */
+  .grid-2{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:22px;
+  }
+  .proj{
+    position:relative;
+    overflow:hidden;
+    aspect-ratio:16/10.5;
+    display:block;
+  }
+  .proj img{
+    width:100%; height:100%; object-fit:cover;
+    transition:transform .6s var(--ease);
+  }
+  .proj-overlay{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 40%, rgba(6,5,12,0.94) 100%);
+    display:flex; flex-direction:column; justify-content:flex-end;
+    padding:24px;
+    opacity:0; transition:opacity .4s var(--ease);
+  }
+  .proj:hover img{ transform:scale(1.06); }
+  .proj:hover .proj-overlay{ opacity:1; }
+  .proj-overlay .mono{ color:var(--accent-2); margin-bottom:6px; }
+  .proj-overlay h4{ font-size:1.1rem; display:flex; align-items:center; gap:8px; }
+  .proj-overlay svg{ width:15px; height:15px; opacity:0.7; }
 
-  <link crossorigin="anonymous" href="assets/styles/main.min.css" media="screen" rel="stylesheet" />
+  /* ---------- experience timeline ---------- */
+  .timeline{ position:relative; padding-left:32px; }
+  .timeline::before{
+    content:'';
+    position:absolute; left:5px; top:6px; bottom:6px;
+    width:1px;
+    background:linear-gradient(var(--accent), var(--accent-2));
+    opacity:0.4;
+  }
+  .t-item{ position:relative; padding-bottom:44px; }
+  .t-item:last-child{ padding-bottom:0; }
+  .t-item::before{
+    content:'';
+    position:absolute; left:-32px; top:5px;
+    width:11px; height:11px; border-radius:50%;
+    background:var(--bg);
+    border:2px solid var(--accent-2);
+  }
+  .t-item .mono{ color:var(--text-dimmer); display:block; margin-bottom:6px; }
+  .t-item h4{ font-size:1.08rem; margin-bottom:8px; }
+  .t-item p{ color:var(--text-dim); font-size:0.94rem; max-width:560px; }
 
-  <script defer src="https://unpkg.com/@alpine-collective/toolkit@1.0.0/dist/cdn.min.js"></script>
+  /* ---------- stats ---------- */
+  .grid-4{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:20px;
+  }
+  .stat{ padding:32px 24px; text-align:left; }
+  .stat .num{
+    font-family:'Unbounded',sans-serif;
+    font-size:2.4rem; font-weight:700;
+    background:linear-gradient(100deg, var(--text), var(--text-dim));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .stat .lbl{ color:var(--text-dim); font-size:0.9rem; margin-top:6px; }
 
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  /* ---------- contact ---------- */
+  .contact-card{
+    padding:52px;
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:50px;
+  }
+  .contact-card h2{ font-size:clamp(1.8rem,3vw,2.3rem); margin-bottom:16px; }
+  .contact-card p{ color:var(--text-dim); margin-bottom:28px; max-width:420px; }
+  .info-list{ display:flex; flex-direction:column; gap:20px; }
+  .info-item .mono{ color:var(--text-dimmer); display:block; margin-bottom:4px; }
+  .info-item a, .info-item span{ font-size:1.02rem; }
+  .info-item a:hover{ color:var(--accent-2); }
 
+  footer{
+    padding:36px 0;
+    border-top:1px solid var(--border);
+  }
+  footer .wrap{
+    display:flex; justify-content:space-between; align-items:center;
+    color:var(--text-dimmer); font-size:0.86rem;
+  }
+  footer .social-row a{ width:36px; height:36px; }
 
-</head>
-
-
-<body :class="{ 'overflow-hidden max-h-screen': mobileMenu }" class="relative" x-data="{ mobileMenu: false }">
-
-  <div id="main" class="relative">
-    <div x-data="{
-    triggerNavItem(id) {
-        $scroll(id)
-    },
-    triggerMobileNavItem(id) {
-        mobileMenu = false;
-        this.triggerNavItem(id)
+  /* ---------- responsive ---------- */
+  @media (max-width:960px){
+    .about-grid, .hero .wrap, .contact-card{ grid-template-columns:1fr; }
+    .grid-3{ grid-template-columns:repeat(2,1fr); }
+    .grid-4{ grid-template-columns:repeat(2,1fr); }
+    .grid-2{ grid-template-columns:1fr; }
+    .panel-wrap{ order:-1; }
+  }
+  @media (max-width:720px){
+    .nav-links, .nav-cta{ display:none; }
+    .burger{ display:flex; }
+    .nav-links.open{
+              display: flex;
+        position: fixed;
+        inset: 0;
+        z-index: 150;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgb(8 7 15 / 66%);
+        gap: 28px;
+        backdrop-filter: blur(7px);
     }
-}">
-      <div class="w-full z-50 top-0 py-3 sm:py-5  absolute
-  ">
-        <div class="container flex items-center justify-between">
-          <div>
-            <a href="/">
-              <!-- <img src="assets/img/logo.svg" class="w-24 lg:w-48" alt="logo image" /> -->
-            </a>
-          </div>
-          <div class="hidden lg:block">
-            <ul class="flex items-center">
+    .nav-links.open a{ font-size:1.3rem; }
+    .grid-3{ grid-template-columns:1fr; }
+    .grid-4{ grid-template-columns:1fr 1fr; }
+    .contact-card{ padding:32px 24px; }
+    .wrap{ padding:0 20px; }
+    section{ padding:80px 0; }
+    .hero{ padding-top:120px; }
+  }
 
-              <li class="group pl-6">
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+    html{ scroll-behavior:auto; }
+  }@media (min-width:721px){
+  header .navbar{ position:relative; }
+  .nav-links{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%, -50%);
+  }
+}
+</style>
+</head>
+<body>
 
-                <span @click="triggerNavItem('#about')"
-                  class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">About</span>
+<div class="mesh"></div>
+<div class="grain"></div>
 
-                <span class="block h-0.5 w-full bg-transparent group-hover:bg-yellow"></span>
-              </li>
+<div class="scroll-progress" id="scrollProgress"></div>
 
-              <li class="group pl-6">
+<header>
+  <nav class="navbar glass">
+    <a href="#top" class="logo">Sanoona<span>.</span></a>
+    <a href="#contact" class="nav-cta">Let's Talk</a>
+    <div class="burger" id="burger"><span></span><span></span><span></span></div>
+  </nav>
 
-                <span @click="triggerNavItem('#services')"
-                  class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Services</span>
+  <!-- moved outside .navbar / .glass -->
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</header>
 
-                <span class="block h-0.5 w-full bg-transparent group-hover:bg-yellow"></span>
-              </li>
+<main id="top">
 
-              <li class="group pl-6">
-
-                <span @click="triggerNavItem('#portfolio')"
-                  class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Portfolio</span>
-
-                <span class="block h-0.5 w-full bg-transparent group-hover:bg-yellow"></span>
-              </li>
-
-              <!-- <li class="group pl-6">
-
-                <span @click="triggerNavItem('#clients')"
-                  class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Clients</span>
-
-                <span class="block h-0.5 w-full bg-transparent group-hover:bg-yellow"></span>
-              </li> -->
-
-              <li class="group pl-6">
-
-                <span @click="triggerNavItem('#work')"
-                  class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Work</span>
-
-                <span class="block h-0.5 w-full bg-transparent group-hover:bg-yellow"></span>
-              </li>
-
-              <li class="group pl-6">
-
-                <span @click="triggerNavItem('#statistics')"
-                  class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Statistics</span>
-
-                <span class="block h-0.5 w-full bg-transparent group-hover:bg-yellow"></span>
-              </li>
-
-              <!-- <li class="group pl-6">
-
-                <span @click="triggerNavItem('#blog')"
-                  class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Blog</span>
-
-                <span class="block h-0.5 w-full bg-transparent group-hover:bg-yellow"></span>
-              </li> -->
-
-              <li class="group pl-6">
-
-                <span @click="triggerNavItem('#contact')"
-                  class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Contact</span>
-
-                <span class="block h-0.5 w-full bg-transparent group-hover:bg-yellow"></span>
-              </li>
-
-            </ul>
-          </div>
-          <div class="block lg:hidden">
-            <button @click="mobileMenu = true">
-              <i class="bx bx-menu text-4xl text-white"></i>
-            </button>
-          </div>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div id="heroText">
+        <div class="eyebrow mono"><span class="dot"></span> Available for freelance & full-time roles</div>
+        <h1>Sanoona <span class="grad">KM</span></h1>
+        <div class="role"><span class="bar"></span> UI/UX Designer &amp; Full Stack Web Developer</div>
+        <p class="lead">Crafting responsive web apps, merchant dashboards, and business portals with PHP, JavaScript, Python and Flask.</p>
+        <div class="hero-cta">
+          <a href="#work" class="btn btn-primary">View My Work</a>
+          <a href="#contact" class="btn btn-ghost">Get In Touch</a>
+        </div>
+        <div class="social-row">
+          <a href="https://www.linkedin.com/in/sanoonakm/" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.44-2.14 2.94v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/sanu__na" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.72 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.21.6 1.76 1.15.55.55.9 1.1 1.15 1.76.25.64.42 1.37.47 2.43.05 1.06.06 1.4.06 4.12s-.01 3.06-.06 4.12c-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.15 1.76 4.9 4.9 0 0 1-1.76 1.15c-.64.25-1.37.42-2.43.47-1.06.05-1.4.06-4.12.06s-3.06-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.76-1.15 4.9 4.9 0 0 1-1.15-1.76c-.25-.64-.42-1.37-.47-2.43C2.01 15.06 2 14.72 2 12s.01-3.06.06-4.12c.05-1.06.22-1.79.47-2.43.26-.66.6-1.21 1.15-1.76A4.9 4.9 0 0 1 5.44.54C6.08.29 6.81.12 7.87.07 8.94.02 9.28 0 12 0zm0 5.35a6.65 6.65 0 1 0 0 13.3 6.65 6.65 0 0 0 0-13.3zm0 10.97a4.32 4.32 0 1 1 0-8.64 4.32 4.32 0 0 1 0 8.64zm6.9-11.24a1.55 1.55 0 1 1-3.1 0 1.55 1.55 0 0 1 3.1 0z"/></svg>
+          </a>
+          <a href="https://wa.me/919544582547" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.29-1.39a9.87 9.87 0 0 0 4.7 1.2h.01c5.46 0 9.9-4.45 9.9-9.9 0-2.65-1.03-5.13-2.9-7-1.87-1.87-4.35-2.91-7-2.91zm0 18.1a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.84-3.04-.2-.31a8.2 8.2 0 1 1 6.97 3.86zm4.5-6.14c-.25-.12-1.46-.72-1.69-.8-.23-.08-.4-.12-.56.12-.17.25-.64.8-.79.96-.14.17-.29.19-.54.06-.25-.12-1.04-.38-1.98-1.22a7.4 7.4 0 0 1-1.37-1.7c-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43-.14-.01-.31-.01-.48-.01-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.41 1.02 2.58.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.66-1.17.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28z"/></svg>
+          </a>
+          <a href="mailto:sanoonasanu3@gmail.com" aria-label="Email">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13zm2.2.5 7.8 6.24L19.8 6H4.2zM20 8.1l-7.4 5.92a1 1 0 0 1-1.24 0L4 8.1V18h16V8.1z"/></svg>
+          </a>
         </div>
       </div>
 
-      <div
-        class="pointer-events-none fixed inset-0 z-70 min-h-screen bg-black bg-opacity-70 opacity-0 transition-opacity lg:hidden"
-        :class="{ 'opacity-100 pointer-events-auto': mobileMenu }">
-        <div class="absolute right-0 min-h-screen w-2/3 bg-primary py-4 px-8 shadow md:w-1/3">
-          <button class="absolute top-0 right-0 mt-4 mr-4" @click="mobileMenu = false">
-            <img src="assets/img/icon-close.svg" class="h-10 w-auto" alt="" />
-          </button>
-
-          <ul class="mt-8 flex flex-col">
-
-            <li class="py-2">
-
-              <span @click="triggerMobileNavItem('#about')"
-                class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">About</span>
-
-            </li>
-
-            <li class="py-2">
-
-              <span @click="triggerMobileNavItem('#services')"
-                class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Services</span>
-
-            </li>
-
-            <li class="py-2">
-
-              <span @click="triggerMobileNavItem('#portfolio')"
-                class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Portfolio</span>
-
-            </li>
-
-            <!-- <li class="py-2">
-
-              <span @click="triggerMobileNavItem('#clients')"
-                class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Clients</span>
-
-            </li> -->
-
-            <li class="py-2">
-
-              <span @click="triggerMobileNavItem('#work')"
-                class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Work</span>
-
-            </li>
-
-            <li class="py-2">
-
-              <span @click="triggerMobileNavItem('#statistics')"
-                class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Statistics</span>
-
-            </li>
-
-            <!-- <li class="py-2">
-
-              <span @click="triggerMobileNavItem('#blog')"
-                class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Blog</span>
-
-            </li> -->
-
-            <li class="py-2">
-
-              <span @click="triggerMobileNavItem('#contact')"
-                class="cursor-pointer pt-0.5 font-header font-semibold uppercase text-white">Contact</span>
-
-            </li>
-
-          </ul>
-        </div>
-      </div>
-
-
-      <div>
-        <div class="relative bg-cover bg-center bg-no-repeat py-8"
-          style="background-image: url(assets/img/bg-hero.jpg)">
-          <div
-            class="absolute inset-0 z-20 bg-gradient-to-r from-hero-gradient-from to-hero-gradient-to bg-cover bg-center bg-no-repeat">
-          </div>
-
-          <div class="container relative z-30 pt-20 pb-12 sm:pt-56 sm:pb-48 lg:pt-64 lg:pb-48">
-            <div class="flex flex-col items-center justify-center lg:flex-row">
-              <div class="rounded-full border-8 border-primary shadow-xl">
-                <img src="assets/img/sanu.png" class="h-48 rounded-full sm:h-56" alt="author" />
+      <div class="panel-wrap">
+        <div id="portraitParallax" style="position:relative; width:min(100%,400px);">
+          <div class="portrait-glow" aria-hidden="true"></div>
+          <div class="portrait-frame">
+            <img src="assets/img/sanu.png" alt="Sanoona KM — UI/UX Designer & Full Stack Developer">
+            <div class="portrait-tag">
+              <div class="who">
+                <div class="nm">Sanoona KM</div>
+                <div class="rl">Calicut, Kerala</div>
               </div>
-              <div class="pt-8 sm:pt-10 lg:pl-8 lg:pt-0">
-                <h1 class="text-center font-header text-4xl text-white sm:text-left sm:text-5xl md:text-6xl">
-                  Hello I'm Sanoona!
-                </h1>
-                <div class="flex flex-col justify-center pt-3 sm:flex-row sm:pt-5 lg:justify-start">
-                  <div class="flex items-center justify-center pl-0 sm:justify-start md:pl-1">
-                    <p class="font-body text-lg uppercase text-white">Let's connect</p>
-                    <div class="hidden sm:block">
-                      <i class="bx bx-chevron-right text-3xl text-yellow"></i>
-                    </div>
-                  </div>
-                  <div class="flex items-center justify-center pt-5 pl-2 sm:justify-start sm:pt-0">
-                    <a href="https://www.linkedin.com/in/sanoonakm/" class="pl-4">
-                      <i class="bx bxl-linkedin text-2xl text-white hover:text-yellow"></i>
-                    </a>
-                    <a href="https://wa.me/919544582547" target="_blank" class="pl-4">
-                      <i class="bx bxl-whatsapp text-2xl text-white hover:text-green-500"></i>
-                    </a>
-                    <a href="mailto:sanoonasanu3@gmail.com" target="_blank" class="pl-4">
-                      <i class="bx bxs-envelope text-2xl text-white hover:text-green-500"></i>
-                    </a>
-                  </div>
-                </div>
-              </div>
+              <div class="status"><span class="dot"></span>Available</div>
             </div>
           </div>
-        </div>
-
-        <div class="bg-grey-50" id="about">
-          <div class="container flex flex-col items-center py-16 md:py-20 lg:flex-row">
-
-            <!-- About -->
-            <div class="w-full text-center sm:w-3/4 lg:w-3/5 lg:text-left">
-              <h2 class="font-header text-4xl font-semibold uppercase text-primary sm:text-5xl lg:text-6xl">
-                About Me
-              </h2>
-
-              <h4 class="pt-6 font-header text-xl font-medium text-black sm:text-2xl lg:text-3xl">
-                I'm Sanoona KM, UI/UX Designer & Full Stack Web Developer
-              </h4>
-
-              <p class="pt-6 font-body leading-relaxed text-grey-20">
-                I am a passionate UI/UX Designer and Frontend Developer with experience in
-                building responsive web applications, business portals, and e-commerce
-                platforms. I specialize in HTML, CSS, JavaScript, PHP, Python, Flask,
-                and MySQL, creating modern user interfaces with excellent user experience
-                and optimized performance across desktop and mobile devices.
-              </p>
-
-              <div class="flex flex-col justify-center pt-6 sm:flex-row lg:justify-start">
-                <div class="flex items-center justify-center sm:justify-start">
-                  <p class="font-body text-lg font-semibold uppercase text-grey-20">
-                    Connect with me
-                  </p>
-                  <div class="hidden sm:block">
-                    <i class="bx bx-chevron-right text-2xl text-primary"></i>
-                  </div>
-                </div>
-
-                <div class="flex items-center justify-center pt-5 pl-2 sm:justify-start sm:pt-0">
-
-                  <a href="https://www.linkedin.com/in/sanoonakm" target="_blank" class="pl-4">
-                    <i class="bx bxl-linkedin text-2xl text-primary hover:text-yellow-400"></i>
-                  </a>
-
-                  <a href="https://wa.me/919544582547" target="_blank" class="pl-4">
-                    <i class="bx bxl-whatsapp text-2xl text-primary hover:text-green-500"></i>
-                  </a>
-
-                  <a href="mailto:sanoonasanu3@gmail.com" class="pl-4">
-                    <i class="bx bxs-envelope text-2xl text-primary hover:text-yellow-400"></i>
-                  </a>
-
-                </div>
-              </div>
-            </div>
-
-            <!-- Skills -->
-            <div class="w-full pl-0 pt-10 sm:w-3/4 lg:w-2/5 lg:pl-12 lg:pt-0">
-
-              <div>
-                <div class="flex items-end justify-between">
-                  <h4 class="font-body font-semibold uppercase text-black">
-                    HTML & CSS
-                  </h4>
-                  <h3 class="font-body text-3xl font-bold text-primary">95%</h3>
-                </div>
-                <div class="mt-2 h-3 w-full rounded-full bg-lila">
-                  <div class="h-3 rounded-full bg-primary" style="width:95%"></div>
-                </div>
-              </div>
-
-              <div class="pt-6">
-                <div class="flex items-end justify-between">
-                  <h4 class="font-body font-semibold uppercase text-black">
-                    JavaScript
-                  </h4>
-                  <h3 class="font-body text-3xl font-bold text-primary">90%</h3>
-                </div>
-                <div class="mt-2 h-3 w-full rounded-full bg-lila">
-                  <div class="h-3 rounded-full bg-primary" style="width:90%"></div>
-                </div>
-              </div>
-
-              <div class="pt-6">
-                <div class="flex items-end justify-between">
-                  <h4 class="font-body font-semibold uppercase text-black">
-                    PHP & MySQL
-                  </h4>
-                  <h3 class="font-body text-3xl font-bold text-primary">88%</h3>
-                </div>
-                <div class="mt-2 h-3 w-full rounded-full bg-lila">
-                  <div class="h-3 rounded-full bg-primary" style="width:88%"></div>
-                </div>
-              </div>
-
-              <div class="pt-6">
-                <div class="flex items-end justify-between">
-                  <h4 class="font-body font-semibold uppercase text-black">
-                    Python & Flask
-                  </h4>
-                  <h3 class="font-body text-3xl font-bold text-primary">82%</h3>
-                </div>
-                <div class="mt-2 h-3 w-full rounded-full bg-lila">
-                  <div class="h-3 rounded-full bg-primary" style="width:82%"></div>
-                </div>
-              </div>
-
-              <div class="pt-6">
-                <div class="flex items-end justify-between">
-                  <h4 class="font-body font-semibold uppercase text-black">
-                    UI/UX & Responsive Design
-                  </h4>
-                  <h3 class="font-body text-3xl font-bold text-primary">92%</h3>
-                </div>
-                <div class="mt-2 h-3 w-full rounded-full bg-lila">
-                  <div class="h-3 rounded-full bg-primary" style="width:92%"></div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-        </div>
-
-        <div class="container py-16 md:py-20" id="services">
-          <h2 class="text-center font-header text-4xl font-semibold uppercase text-primary sm:text-5xl lg:text-6xl">
-            What I Do
-          </h2>
-
-          <h3 class="pt-6 text-center font-header text-xl font-medium text-black sm:text-2xl lg:text-3xl">
-            Professional services I provide
-          </h3>
-
-          <div class="grid grid-cols-1 gap-6 pt-10 sm:grid-cols-2 md:gap-10 md:pt-12 lg:grid-cols-3">
-
-            <!-- UI/UX -->
-            <div class="group rounded px-8 py-12 shadow hover:bg-primary">
-              <div class="text-center text-6xl text-primary group-hover:text-white">
-                <i class="bx bx-palette" style="font-size: 100px;"></i>
-              </div>
-              <div class="text-center">
-                <h3 class="pt-8 text-lg font-semibold uppercase text-primary group-hover:text-yellow-400">
-                  UI/UX Design
-                </h3>
-                <p class="pt-4 text-sm text-grey group-hover:text-white">
-                  Designing modern, user-friendly interfaces for web and mobile applications.
-                </p>
-              </div>
-            </div>
-
-            <!-- Frontend -->
-            <div class="group rounded px-8 py-12 shadow hover:bg-primary">
-              <div class="text-center text-6xl text-primary group-hover:text-white">
-                <i class="bx bx-code-alt" style="font-size: 100px;"></i>
-              </div>
-              <div class="text-center">
-                <h3 class="pt-8 text-lg font-semibold uppercase text-primary group-hover:text-yellow-400">
-                  Frontend Development
-                </h3>
-                <p class="pt-4 text-sm text-grey group-hover:text-white">
-                  Responsive websites built with HTML, CSS, JavaScript and Bootstrap.
-                </p>
-              </div>
-            </div>
-
-            <!-- PHP -->
-            <div class="group rounded px-8 py-12 shadow hover:bg-primary">
-              <div class="text-center text-6xl text-primary group-hover:text-white">
-                <i class="bx bx-data" style="font-size: 100px;"></i>
-              </div>
-              <div class="text-center">
-                <h3 class="pt-8 text-lg font-semibold uppercase text-primary group-hover:text-yellow-400">
-                  PHP & MySQL Development
-                </h3>
-                <p class="pt-4 text-sm text-grey group-hover:text-white">
-                  Dynamic web applications with secure backend and database integration.
-                </p>
-              </div>
-            </div>
-
-            <!-- Python -->
-            <div class="group rounded px-8 py-12 shadow hover:bg-primary">
-              <div class="text-center text-6xl text-primary group-hover:text-white">
-                <i class="bx bx-brain" style="font-size: 100px;"></i>
-              </div>
-              <div class="text-center">
-                <h3 class="pt-8 text-lg font-semibold uppercase text-primary group-hover:text-yellow-400">
-                  Python & Flask
-                </h3>
-                <p class="pt-4 text-sm text-grey group-hover:text-white">
-                  Python automation, APIs, and Flask-based web application development.
-                </p>
-              </div>
-            </div>
-
-            <!-- API -->
-            <div class="group rounded px-8 py-12 shadow hover:bg-primary">
-              <div class="text-center text-6xl text-primary group-hover:text-white">
-                <i class="bx bx-transfer" style="font-size: 100px;"></i>
-              </div>
-              <div class="text-center">
-                <h3 class="pt-8 text-lg font-semibold uppercase text-primary group-hover:text-yellow-400">
-                  REST API Integration
-                </h3>
-                <p class="pt-4 text-sm text-grey group-hover:text-white">
-                  Integrating third-party APIs and backend services into web applications.
-                </p>
-              </div>
-            </div>
-
-            <!-- Responsive -->
-            <div class="group rounded px-8 py-12 shadow hover:bg-primary">
-              <div class="text-center text-6xl text-primary group-hover:text-white">
-                <i class="bx bx-devices" style="font-size: 100px;"></i>
-              </div>
-              <div class="text-center">
-                <h3 class="pt-8 text-lg font-semibold uppercase text-primary group-hover:text-yellow-400">
-                  Responsive Web Design
-                </h3>
-                <p class="pt-4 text-sm text-grey group-hover:text-white">
-                  Creating fast, mobile-friendly and cross-browser compatible websites.
-                </p>
-              </div>
-            </div>
-
-          </div>
-        </div>
-        ```
-
-
-        <div class="container py-16 md:py-20" id="portfolio">
-          <h2 class="text-center font-header text-4xl font-semibold uppercase text-primary sm:text-5xl lg:text-6xl">
-            Check out my Portfolio
-          </h2>
-          <h3 class="pt-6 text-center font-header text-xl font-medium text-black sm:text-2xl lg:text-3xl">
-            Here's what I have done with the past
-          </h3>
-
-          <div class="mx-auto grid w-full grid-cols-1 gap-8 pt-12 sm:w-3/4 md:gap-10 lg:w-full lg:grid-cols-2">
-            <a href="https://swiftcomextechnologies.com/" target="_blank" class="mx-auto transform transition-all hover:scale-105 md:mx-0">
-              <img src="assets/img/swiftcomex.png" class="w-full shadow" alt="portfolio image" />
-            </a>
-            <a href="https://sdine.sitedecode.com/" target="_blank" class="mx-auto transform transition-all hover:scale-105 md:mx-0">
-              <img src="assets/img/sdine.png" class="w-full shadow" alt="portfolio image" />
-            </a>
-            <a href="https://dbusinessltd.com/" target="_blank" class="mx-auto transform transition-all hover:scale-105 md:mx-0">
-              <img src="assets/img/SDbuis.png" class="w-full shadow" alt="portfolio image" />
-            </a>
-             <a href="https://www.vtbakes.com/" target="_blank" class="mx-auto transform transition-all hover:scale-105 md:mx-0">
-              <img src="assets/img/Vtbakes.png" class="w-full shadow" alt="portfolio image" />
-            </a>
-            <a href="https://gydfuture.com/" target="_blank" class="mx-auto transform transition-all hover:scale-105 md:mx-0">
-              <img src="assets/img/GYDUser.png" class="w-full shadow" alt="portfolio image" />
-            </a>
-            <a href="https://business.gydfuture.com/" target="_blank" class="mx-auto transform transition-all hover:scale-105 md:mx-0">
-              <img src="assets/img/GYDU.png" class="w-full shadow" alt="portfolio image" />
-            </a>
-             <a href="" target="_blank" class="mx-auto transform transition-all hover:scale-105 md:mx-0">
-              <img src="assets/img/smartLEnse.png" class="w-full shadow" alt="portfolio image" />
-            </a>
-            <a href="" target="_blank" class="mx-auto transform transition-all hover:scale-105 md:mx-0">
-              <img src="assets/img/ecom.png" class="w-full shadow" alt="portfolio image" />
-            </a>
-          </div>
-        </div>
-
-        
-<div class="container py-16 md:py-20" id="work">
-
-  <h2 class="text-center font-header text-4xl font-semibold uppercase text-primary sm:text-5xl lg:text-6xl">
-    My Work Experience
-  </h2>
-
-  <h3 class="pt-6 text-center font-header text-xl font-medium text-black sm:text-2xl lg:text-3xl">
-    My professional journey and projects
-  </h3>
-
-  <div class="relative mx-auto mt-12 flex w-full flex-col lg:w-2/3">
-
-    <span class="left-2/5 absolute inset-y-0 ml-10 hidden w-0.5 bg-grey-40 md:block"></span>
-
-    <!-- IXB TECH -->
-    <div class="mt-8 flex flex-col md:flex-row">
-      <div class="md:w-2/5"></div>
-
-      <div class="md:w-3/5">
-        <div class="relative flex md:pl-18">
-          <span class="absolute left-8 top-1 hidden h-4 w-4 rounded-full border-2 border-grey-40 bg-white md:block"></span>
-
-          <div class="mt-1 flex">
-            <i class="bx bxs-right-arrow hidden text-primary md:block"></i>
-
-            <div class="md:-mt-1 md:pl-8">
-              <span class="block font-body font-bold text-grey-40">
-                2024 - Present
-              </span>
-
-              <span class="block pt-2 font-header text-xl font-bold uppercase text-primary">
-                UI/UX Designer & Frontend Developer
-              </span>
-
-              <div class="pt-2">
-                <span class="block font-body text-black">
-                  Working at IXB Tech Pvt Ltd, designing responsive web interfaces,
-                  dashboards, business portals, and integrating REST APIs while
-                  improving performance and mobile responsiveness.
-                </span>
-              </div>
-
-            </div>
+          <div class="badge-row">
+            <span class="badge"><img src="assets/img/php.png" alt="PHP"></span>
+            <span class="badge"><img src="assets/img/html.css.js.png" alt="HTML, CSS, JavaScript"></span>
+            <span class="badge"><img src="assets/img/python.png" alt="Python"></span>
+            <span class="badge dark"><img src="assets/img/flask-logo-png-svg.png" alt="Flask"></span>
+            <span class="badge"><img src="assets/img/mysql.png" alt="MySQL"></span>
+            <span class="badge"><img src="assets/img/bootstrap.png" alt="Bootstrap"></span>
           </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- GYD Future -->
-    <div class="mt-8 flex flex-col md:flex-row">
-      <div class="md:w-2/5"></div>
-
-      <div class="md:w-3/5">
-        <div class="relative flex md:pl-18">
-          <span class="absolute left-8 top-1 hidden h-4 w-4 rounded-full border-2 border-grey-40 bg-white md:block"></span>
-
-          <div class="mt-1 flex">
-            <i class="bx bxs-right-arrow hidden text-primary md:block"></i>
-
-            <div class="md:-mt-1 md:pl-8">
-              <span class="block font-body font-bold text-grey-40">
-                Featured Project
-              </span>
-
-              <span class="block pt-2 font-header text-xl font-bold uppercase text-primary">
-                GYD Future & Merchant Platform
-              </span>
-
-              <div class="pt-2">
-                <span class="block font-body text-black">
-                  Designed and developed responsive business portals, merchant
-                  dashboards, and interactive user interfaces with modern UI/UX.
-                </span>
-              </div>
-
-            </div>
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="mono" data-parallax="0.06">01 — About</span>
+        <h2>Designer first, developer always.</h2>
+      </div>
+      <div class="about-grid">
+        <div class="reveal">
+          <h3>UI/UX Designer & Full Stack Web Developer</h3>
+          <p>I'm Sanoona KM, a passionate UI/UX Designer and Frontend Developer with experience building responsive web applications, business portals, and e-commerce platforms.</p>
+          <p>I specialize in HTML, CSS, JavaScript, PHP, Python, Flask and MySQL — creating modern user interfaces with excellent user experience and optimized performance across desktop and mobile devices.</p>
+          <div class="social-row" style="margin-top:26px;">
+            <a href="https://www.linkedin.com/in/sanoonakm" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.44-2.14 2.94v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg></a>
+            <a href="https://wa.me/919544582547" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.29-1.39a9.87 9.87 0 0 0 4.7 1.2h.01c5.46 0 9.9-4.45 9.9-9.9 0-2.65-1.03-5.13-2.9-7-1.87-1.87-4.35-2.91-7-2.91zm0 18.1a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.84-3.04-.2-.31a8.2 8.2 0 1 1 6.97 3.86zm4.5-6.14c-.25-.12-1.46-.72-1.69-.8-.23-.08-.4-.12-.56.12-.17.25-.64.8-.79.96-.14.17-.29.19-.54.06-.25-.12-1.04-.38-1.98-1.22a7.4 7.4 0 0 1-1.37-1.7c-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43-.14-.01-.31-.01-.48-.01-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.41 1.02 2.58.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.66-1.17.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28z"/></svg></a>
+            <a href="mailto:sanoonasanu3@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13zm2.2.5 7.8 6.24L19.8 6H4.2zM20 8.1l-7.4 5.92a1 1 0 0 1-1.24 0L4 8.1V18h16V8.1z"/></svg></a>
+          </div>
+        </div>
+        <div class="reveal" id="skills">
+          <div class="skill">
+            <div class="skill-top"><span>HTML & CSS</span><span>95%</span></div>
+            <div class="skill-track"><div class="skill-fill" data-w="95"></div></div>
+          </div>
+          <div class="skill">
+            <div class="skill-top"><span>JavaScript</span><span>90%</span></div>
+            <div class="skill-track"><div class="skill-fill" data-w="90"></div></div>
+          </div>
+          <div class="skill">
+            <div class="skill-top"><span>PHP & MySQL</span><span>88%</span></div>
+            <div class="skill-track"><div class="skill-fill" data-w="88"></div></div>
+          </div>
+          <div class="skill">
+            <div class="skill-top"><span>Python & Flask</span><span>82%</span></div>
+            <div class="skill-track"><div class="skill-fill" data-w="82"></div></div>
+          </div>
+          <div class="skill">
+            <div class="skill-top"><span>UI/UX & Responsive Design</span><span>92%</span></div>
+            <div class="skill-track"><div class="skill-fill" data-w="92"></div></div>
           </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Facial Recognition -->
-    <div class="mt-8 flex flex-col md:flex-row">
-      <div class="md:w-2/5"></div>
-
-      <div class="md:w-3/5">
-        <div class="relative flex md:pl-18">
-          <span class="absolute left-8 top-1 hidden h-4 w-4 rounded-full border-2 border-grey-40 bg-white md:block"></span>
-
-          <div class="mt-1 flex">
-            <i class="bx bxs-right-arrow hidden text-primary md:block"></i>
-
-            <div class="md:-mt-1 md:pl-8">
-              <span class="block font-body font-bold text-grey-40">
-                Personal Project
-              </span>
-
-              <span class="block pt-2 font-header text-xl font-bold uppercase text-primary">
-                Facial Recognition Attendance System
-              </span>
-
-              <div class="pt-2">
-                <span class="block font-body text-black">
-                  Built a Python and Flask based facial recognition attendance
-                  system with login/logout tracking, API integration, and
-                  browser compatibility.
-                </span>
-              </div>
-
-            </div>
-          </div>
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="mono" data-parallax="0.06">02 — Services</span>
+        <h2>What I do</h2>
+        <p>Professional services I provide, from first wireframe to production deploy.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card glass reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></svg></div>
+          <h4>UI/UX Design</h4>
+          <p>Designing modern, user-friendly interfaces for web and mobile applications.</p>
+        </div>
+        <div class="card glass reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 4 3 12l5 8M16 4l5 8-5 8"/></svg></div>
+          <h4>Frontend Development</h4>
+          <p>Responsive websites built with HTML, CSS, JavaScript and Bootstrap.</p>
+        </div>
+        <div class="card glass reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg></div>
+          <h4>PHP & MySQL Development</h4>
+          <p>Dynamic web applications with secure backend and database integration.</p>
+        </div>
+        <div class="card glass reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a5 5 0 0 0-5 5v1H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5z"/></svg></div>
+          <h4>Python & Flask</h4>
+          <p>Python automation, APIs, and Flask-based web application development.</p>
+        </div>
+        <div class="card glass reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 7a4 4 0 1 0-3.9 4.9L9 16l-2 2M9 7a4 4 0 1 0 3.9 4.9L17 16l2 2"/></svg></div>
+          <h4>REST API Integration</h4>
+          <p>Integrating third-party APIs and backend services into web applications.</p>
+        </div>
+        <div class="card glass reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="12" height="14" rx="2"/><rect x="16" y="3" width="6" height="10" rx="2"/></svg></div>
+          <h4>Responsive Web Design</h4>
+          <p>Creating fast, mobile-friendly and cross-browser compatible websites.</p>
         </div>
       </div>
     </div>
+  </section>
 
-  </div>
-
-</div>
-
-
-<div class="bg-cover bg-top bg-no-repeat pb-16 md:py-16 lg:py-24"
-     style="background-image: url(assets/img/experience-figure.png)"
-     id="statistics">
-
-  <div class="container">
-    <div class="mx-auto w-5/6 bg-white py-16 shadow md:w-11/12 lg:py-20 xl:py-24 2xl:w-full">
-
-      <div class="grid grid-cols-2 gap-5 md:gap-8 xl:grid-cols-4">
-
-        <!-- Projects -->
-        <div class="flex flex-col items-center text-center">
-          <img src="assets/img/icon-project.svg" class="mx-auto h-12 w-auto md:h-20" alt="">
-          <h1 class="text-4xl font-bold text-primary">15+</h1>
-          <h4 class="font-header text-lg">Projects Completed</h4>
-        </div>
-
-        <!-- Experience -->
-        <div class="flex flex-col items-center text-center">
-          <img src="assets/img/icon-award.svg" class="mx-auto h-12 w-auto md:h-20" alt="">
-          <h1 class="text-4xl font-bold text-primary">2</h1>
-          <h4 class="font-header text-lg">Years Experience</h4>
-        </div>
-
-        <!-- Technologies -->
-        <div class="flex flex-col items-center text-center">
-          <img src="assets/img/icon-happy.svg" class="mx-auto h-12 w-auto md:h-20" alt="">
-          <h1 class="text-4xl font-bold text-primary">10+</h1>
-          <h4 class="font-header text-lg">Technologies</h4>
-        </div>
-
-        <!-- Responsive Websites -->
-        <div class="flex flex-col items-center text-center">
-          <img src="assets/img/icon-puzzle.svg"class="mx-auto h-12 w-auto md:h-20" alt="">
-          <h1 class="text-4xl font-bold text-primary">100%</h1>
-          <h4 class="font-header text-lg">Responsive Design</h4>
-        </div>
-
+  <!-- PORTFOLIO -->
+  <section id="work">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="mono" data-parallax="0.06">03 — Portfolio</span>
+        <h2>Check out my work</h2>
+        <p>A selection of platforms, dashboards and business portals I've designed and built.</p>
       </div>
+      <div class="grid-2">
+        <a class="proj glass reveal" href="https://swiftcomextechnologies.com/" target="_blank" rel="noopener" data-parallax="0.03">
+          <img src="assets/img/swiftcomex.png" alt="Swiftcomex Technologies">
+          <div class="proj-overlay"><span class="mono">Business Website</span><h4>Swiftcomex Technologies <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></h4></div>
+        </a>
+        <a class="proj glass reveal" href="https://sdine.sitedecode.com/" target="_blank" rel="noopener" data-parallax="0.05">
+          <img src="assets/img/sdine.png" alt="SDine">
+          <div class="proj-overlay"><span class="mono">Restaurant Platform</span><h4>SDine <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></h4></div>
+        </a>
+        <a class="proj glass reveal" href="https://dbusinessltd.com/" target="_blank" rel="noopener" data-parallax="0.03">
+          <img src="assets/img/SDbuis.png" alt="D Business Ltd">
+          <div class="proj-overlay"><span class="mono">Business Portal</span><h4>D Business Ltd <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></h4></div>
+        </a>
+        <a class="proj glass reveal" href="https://www.vtbakes.com/" target="_blank" rel="noopener" data-parallax="0.05">
+          <img src="assets/img/Vtbakes.png" alt="VT Bakes">
+          <div class="proj-overlay"><span class="mono">E-commerce</span><h4>VT Bakes <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></h4></div>
+        </a>
+        <a class="proj glass reveal" href="https://gydfuture.com/" target="_blank" rel="noopener" data-parallax="0.03">
+          <img src="assets/img/GYDUser.png" alt="GYD Future">
+          <div class="proj-overlay"><span class="mono">User Platform</span><h4>GYD Future <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></h4></div>
+        </a>
+        <a class="proj glass reveal" href="https://business.gydfuture.com/" target="_blank" rel="noopener" data-parallax="0.05">
+          <img src="assets/img/GYDU.png" alt="GYD Future Business">
+          <div class="proj-overlay"><span class="mono">Merchant Dashboard</span><h4>GYD Future Business <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></h4></div>
+        </a>
+        <div class="proj glass reveal">
+          <img src="assets/img/smartLEnse.png" alt="Smart Lense">
+          <div class="proj-overlay"><span class="mono">Product UI</span><h4>Smart Lense</h4></div>
+        </div>
+        <div class="proj glass reveal">
+          <img src="assets/img/ecom.png" alt="E-commerce Platform">
+          <div class="proj-overlay"><span class="mono">E-commerce</span><h4>E-commerce Platform</h4></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="mono" data-parallax="0.06">04 — Experience</span>
+        <h2>My professional journey</h2>
+      </div>
+      <div class="timeline reveal">
+        <div class="t-item">
+          <span class="mono">2024 — Present</span>
+          <h4>UI/UX Designer & Frontend Developer, IXB Tech Pvt Ltd</h4>
+          <p>Designing responsive web interfaces, dashboards, business portals, and integrating REST APIs while improving performance and mobile responsiveness.</p>
+        </div>
+        <div class="t-item">
+          <span class="mono">Featured Project</span>
+          <h4>GYD Future & Merchant Platform</h4>
+          <p>Designed and developed responsive business portals, merchant dashboards, and interactive user interfaces with modern UI/UX.</p>
+        </div>
+        <div class="t-item">
+          <span class="mono">Personal Project</span>
+          <h4>Facial Recognition Attendance System</h4>
+          <p>Built a Python and Flask based facial recognition attendance system with login/logout tracking, API integration, and browser compatibility.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section id="stats">
+    <div class="wrap">
+      <div class="grid-4">
+        <div class="stat glass reveal"><div class="num" data-count="15">0</div><div class="lbl">Projects Completed</div></div>
+        <div class="stat glass reveal"><div class="num" data-count="2">0</div><div class="lbl">Years Experience</div></div>
+        <div class="stat glass reveal"><div class="num" data-count="10">0</div><div class="lbl">Technologies</div></div>
+        <div class="stat glass reveal"><div class="num" data-count="100">0</div><div class="lbl">Responsive Design</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="wrap">
+      <div class="contact-card glass reveal">
+        <div>
+          <span class="mono" style="color:var(--accent-2);">05 — Contact</span>
+          <h2 style="margin-top:14px;">Have a project in mind?</h2>
+          <p>I'm currently open to freelance work and full-time roles. Reach out and let's build something worth using.</p>
+          <a href="mailto:sanoonasanu3@gmail.com" class="btn btn-primary">Say Hello</a>
+        </div>
+        <div class="info-list">
+          <div class="info-item"><span class="mono">Phone</span><br><a href="tel:+919544582547">+91 9544582547</a></div>
+          <div class="info-item"><span class="mono">Email</span><br><a href="mailto:sanoonasanu3@gmail.com">sanoonasanu3@gmail.com</a></div>
+          <div class="info-item"><span class="mono">Address</span><br><span>Chelannur, Calicut</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Sanoona KM. All Rights Reserved.</span>
+    <div class="social-row">
+      <a href="https://www.linkedin.com/in/sanoonakm" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.44-2.14 2.94v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg></a>
+      <a href="https://www.instagram.com/sanu__na" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.72 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.21.6 1.76 1.15.55.55.9 1.1 1.15 1.76.25.64.42 1.37.47 2.43.05 1.06.06 1.4.06 4.12s-.01 3.06-.06 4.12c-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.15 1.76 4.9 4.9 0 0 1-1.76 1.15c-.64.25-1.37.42-2.43.47-1.06.05-1.4.06-4.12.06s-3.06-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.76-1.15 4.9 4.9 0 0 1-1.15-1.76c-.25-.64-.42-1.37-.47-2.43C2.01 15.06 2 14.72 2 12s.01-3.06.06-4.12c.05-1.06.22-1.79.47-2.43.26-.66.6-1.21 1.15-1.76A4.9 4.9 0 0 1 5.44.54C6.08.29 6.81.12 7.87.07 8.94.02 9.28 0 12 0zm0 5.35a6.65 6.65 0 1 0 0 13.3 6.65 6.65 0 0 0 0-13.3zm0 10.97a4.32 4.32 0 1 1 0-8.64 4.32 4.32 0 0 1 0 8.64zm6.9-11.24a1.55 1.55 0 1 1-3.1 0 1.55 1.55 0 0 1 3.1 0z"/></svg></a>
+      <a href="https://wa.me/919544582547" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.29-1.39a9.87 9.87 0 0 0 4.7 1.2h.01c5.46 0 9.9-4.45 9.9-9.9 0-2.65-1.03-5.13-2.9-7-1.87-1.87-4.35-2.91-7-2.91zm0 18.1a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.84-3.04-.2-.31a8.2 8.2 0 1 1 6.97 3.86zm4.5-6.14c-.25-.12-1.46-.72-1.69-.8-.23-.08-.4-.12-.56.12-.17.25-.64.8-.79.96-.14.17-.29.19-.54.06-.25-.12-1.04-.38-1.98-1.22a7.4 7.4 0 0 1-1.37-1.7c-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43-.14-.01-.31-.01-.48-.01-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.41 1.02 2.58.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.66-1.17.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28z"/></svg></a>
+      <a href="mailto:sanoonasanu3@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13zm2.2.5 7.8 6.24L19.8 6H4.2zM20 8.1l-7.4 5.92a1 1 0 0 1-1.24 0L4 8.1V18h16V8.1z"/></svg></a>
     </div>
   </div>
-</div>
+</footer>
 
+<script>
+  // scroll-driven parallax
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const scrollProgress = document.getElementById('scrollProgress');
+  const heroText = document.getElementById('heroText');
+  const portraitParallax = document.getElementById('portraitParallax');
+  const mesh = document.querySelector('.mesh');
+  const parallaxEls = document.querySelectorAll('[data-parallax]');
+  const heroSection = document.querySelector('.hero');
+  let mouseX = 0, mouseY = 0;
 
-        
-        <div class="container py-16 md:py-20" id="contact">
-          <h2 class="text-center font-header text-4xl font-semibold uppercase text-primary sm:text-5xl lg:text-6xl">
-            Have a Project in Mind?
-          </h2>
-          
-          
-          <div class="flex flex-col pt-16 lg:flex-row">
-            <div class="w-full border-l-2 border-t-2 border-r-2 border-b-2 border-grey-60 px-6 py-6 sm:py-8 lg:w-1/3">
-              <div class="flex items-center">
-                <i class="bx bx-phone text-2xl text-grey-40"></i>
-                <p class="pl-2 font-body font-bold uppercase text-grey-40 lg:text-lg">
-                  My Phone
-                </p>
-              </div>
-              <p class="pt-2 text-left font-body font-bold text-primary lg:text-lg">
-                +91 9544582547
-              </p>
-            </div>
-            <div
-              class="w-full border-l-2 border-t-0 border-r-2 border-b-2 border-grey-60 px-6 py-6 sm:py-8 lg:w-1/3 lg:border-l-0 lg:border-t-2">
-              <div class="flex items-center">
-                <i class="bx bx-envelope text-2xl text-grey-40"></i>
-                <p class="pl-2 font-body font-bold uppercase text-grey-40 lg:text-lg">
-                  My Email
-                </p>
-              </div>
-              <p class="pt-2 text-left font-body font-bold text-primary lg:text-lg">
-                sanoonasanu3@gmail.com
-              </p>
-            </div>
-            <div
-              class="w-full border-l-2 border-t-0 border-r-2 border-b-2 border-grey-60 px-6 py-6 sm:py-8 lg:w-1/3 lg:border-l-0 lg:border-t-2">
-              <div class="flex items-center">
-                <i class="bx bx-map text-2xl text-grey-40"></i>
-                <p class="pl-2 font-body font-bold uppercase text-grey-40 lg:text-lg">
-                  My Address
-                </p>
-              </div>
-              <p class="pt-2 text-left font-body font-bold text-primary lg:text-lg">
-                Chelannur,Calicut
-              </p>
-            </div>
-          </div>
-        </div>
+  function runParallax(){
+    const scrollY = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    if(scrollProgress) scrollProgress.style.width = (docHeight > 0 ? (scrollY / docHeight) * 100 : 0) + '%';
 
-        
-      </div>
+    if(!reduceMotion){
+      if(mesh) mesh.style.transform = `translate3d(${mouseX}px, ${mouseY + scrollY * 0.1}px, 0)`;
 
-<div class="bg-primary">
-  <div class="container flex flex-col justify-between py-6 sm:flex-row">
+      if(heroText && heroSection){
+        const heroH = heroSection.offsetHeight;
+        const p = Math.min(scrollY / heroH, 1);
+        heroText.style.transform = `translateY(${scrollY * 0.18}px)`;
+        heroText.style.opacity = String(1 - p * 1.15);
+      }
 
-    <p class="text-center font-body text-white md:text-left">
-      © 2026 Sanoona KM. All Rights Reserved.
-    </p>
+      if(portraitParallax && heroSection){
+        const heroH = heroSection.offsetHeight;
+        const p = Math.min(scrollY / heroH, 1);
+        const scale = 1 - Math.min(scrollY * 0.00022, 0.1);
+        portraitParallax.style.transform = `translateY(${scrollY * 0.28}px) scale(${scale})`;
+        portraitParallax.style.opacity = String(1 - p * 1.15);
+      }
 
-    <div class="flex items-center justify-center pt-5 sm:justify-start sm:pt-0">
+      parallaxEls.forEach(el => {
+        const speed = parseFloat(el.dataset.parallax) || 0;
+        const rect = el.getBoundingClientRect();
+        const centerOffset = (rect.top + rect.height / 2) - (window.innerHeight / 2);
+        el.style.transform = `translateY(${centerOffset * -speed}px)`;
+      });
+    }
 
-      <!-- LinkedIn -->
-      <a href="https://www.linkedin.com/in/sanoonakm" target="_blank">
-        <i class="bx bxl-linkedin text-2xl text-white hover:text-yellow-400"></i>
-      </a>
+    requestAnimationFrame(runParallax);
+  }
+  requestAnimationFrame(runParallax);
 
-      <!-- Instagram -->
-      <a href="https://www.instagram.com/sanu__na" target="_blank" class="pl-4">
-        <i class="bx bxl-instagram text-2xl text-white hover:text-yellow-400"></i>
-      </a>
+  // mobile nav
+  const burger = document.getElementById('burger');
+  const navLinks = document.getElementById('navLinks');
+  burger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
 
-      <!-- WhatsApp -->
-      <a href="https://wa.me/919544582547" target="_blank" class="pl-4">
-        <i class="bx bxl-whatsapp text-2xl text-white hover:text-green-400"></i>
-      </a>
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
 
-      <!-- Email -->
-      <a href="mailto:sanoonasanu3@gmail.com" class="pl-4">
-        <i class="bx bxs-envelope text-2xl text-white hover:text-yellow-400"></i>
-      </a>
+  // skill bars
+  const skillFills = document.querySelectorAll('.skill-fill');
+  const skillIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        skillFills.forEach(f => f.style.width = f.dataset.w + '%');
+        skillIO.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  const skillsSection = document.getElementById('skills');
+  if(skillsSection) skillIO.observe(skillsSection);
 
+  // counters
+  const counters = document.querySelectorAll('.num[data-count]');
+  const counterIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        const el = e.target;
+        const target = parseInt(el.dataset.count, 10);
+        const suffix = target === 100 ? '%' : '+';
+        let cur = 0;
+        const step = Math.max(1, Math.round(target / 40));
+        const tick = () => {
+          cur += step;
+          if(cur >= target){ el.textContent = target + suffix; return; }
+          el.textContent = cur + suffix;
+          requestAnimationFrame(tick);
+        };
+        tick();
+        counterIO.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(c => counterIO.observe(c));
 
-    </div>
-
-  </div>
-</div>
-
-    </div>
-
-    <script src="assets/js/main.js"></script>
-
+  // subtle parallax on hero mesh via mouse (combined with scroll parallax in runParallax)
+  document.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 14;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 14;
+  });
+</script>
 
 </body>
-
 </html>
